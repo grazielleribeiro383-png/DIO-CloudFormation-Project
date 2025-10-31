@@ -1,0 +1,16 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Cria um Bucket S3 para o Desafio DIO.
+
+Parameters:
+  BucketNameParameter:
+    Type: String
+    Description: Nome ÚNICO globalmente para o seu novo Bucket S3.
+
+Resources:
+  MyLogBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Ref BucketNameParameter
+      Tags:
+        - Key: Project
+          Value: DesafioDIO
