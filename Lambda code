@@ -1,0 +1,45 @@
+LAMBDA CODE
+import json
+import logging
+
+# Configuração básica de log para que vejamos as mensagens no CloudWatch
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+
+def lambda_handler(event, context):
+    """
+    Função principal que é executada quando um evento S3 a aciona.
+    O 'event' contém todos os metadados do upload do arquivo.
+    """
+    
+    # O evento S3 sempre envia um ou mais 'Records' (registros)
+    for record in event['Records']:
+        try:
+            # 1. Extrai as informações essenciais do evento S3
+            # O nome do bucket que acionou a função
+            bucket_name = record['s3']['bucket']['name']
+            # O caminho e nome do arquivo que foi enviado (a 'chave' do objeto)
+            object_key = record['s3']['object']['key']
+            # O horário em que o evento ocorreu
+            event_time = record['eventTime']
+            
+            # 2. Registra as informações do evento no CloudWatch Logs
+            logger.info("--- NOVO ARQUIVO PROCESSADO ---")
+            logger.info(f"Bucket de Origem: {bucket_name}")
+            logger.info(f"Chave do Objeto (Arquivo): {object_key}")
+            logger.info(f"Horário do Upload: {event_time}")
+            
+            # 3. Se fosse um projeto real, a lógica de processamento
+            # (ex: redimensionar imagem, ler CSV, mover arquivo) viria aqui.
+            
+            logger.info("Processamento básico de logs concluído e validado.")
+
+        except Exception as e:
+            # Em caso de erro, registra a falha e interrompe a execução
+            logger.error(f"Erro ao processar registro: {e}")
+            raise e 
+
+    return {
+        'statusCode': 200,
+        'body': json.dumps('Automação S3/Lambda executada com sucesso!')
+    }
